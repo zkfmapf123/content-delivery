@@ -23,8 +23,9 @@ func main() {
 	
 	app.Get("/content/:id",middlewares.LoggerMiddleware(), apis.GetPost())
 	app.Post("/content",middlewares.LoggerMiddleware(), apis.PostCreate())
-	app.Put("/content",middlewares.LoggerMiddleware(), apis.PostUpdate())
-	app.Delete("/content",middlewares.LoggerMiddleware(), apis.PostDelete())
+
+	app.Post("/restore/:id",middlewares.LoggerMiddleware(), apis.PostRestore())
+	app.Delete("/content/:id",middlewares.LoggerMiddleware(), apis.PostDelete())
 
 	net.Run(app, PORT)	
 }

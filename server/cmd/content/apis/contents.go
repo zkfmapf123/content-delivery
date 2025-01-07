@@ -43,8 +43,25 @@ func PostUpdate() fiber.Handler{
 	}
 }
 
+func PostRestore() fiber.Handler{
+	return func(c *fiber.Ctx) error {
+		id := c.Params("id")
+
+		p := mysql.NewPost()
+		p.UnDelete(id)
+
+		return c.SendStatus(200)
+	}
+}
+
 func PostDelete() fiber.Handler{
 	return func(c *fiber.Ctx) error {
-		return c.SendString("Content")
+
+		id := c.Params("id")
+
+		p := mysql.NewPost()
+		p.Delete(id)
+
+		return c.SendStatus(200)
 	}
 }
