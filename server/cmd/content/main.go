@@ -33,7 +33,7 @@ func main() {
 		WithUser(os.Getenv("DB_USER")).
 		WithPassword(os.Getenv("DB_PASSWORD")).
 		WithDatabase(os.Getenv("DB_DATABASE")).
-		Build()
+		Build() 
 	
 	if err != nil {
 		panic(err)

@@ -66,34 +66,34 @@ func (p mysqlParams) Build() (MysqlConn, error) {
 }
 
 
-func (m MysqlConn) Select(query string, args map[string]interface{}) (interface{}, error) {
-	rows, err := m.db.NamedQuery(query, args)
-	if err != nil {
-		return nil, err
-	}
-	return rows, nil
-}
+// func (m MysqlConn) Select(query string, args map[string]interface{}) (interface{}, error) {
+// 	rows, err := m.db.NamedQuery(query, args)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return rows, nil
+// }
 
-func (m MysqlConn) Insert(query string, args map[string]interface{}) (interface{}, error) {
-	result, err := m.db.NamedExec(query, args)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
+// func (m MysqlConn) Insert(query string, args map[string]interface{}) (interface{}, error) {
+// 	result, err := m.db.NamedExec(query, args)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return result, nil
+// }
 
-func (m MysqlConn) Update(query string, args map[string]interface{}) (interface{}, error) {
-	result, err := m.db.NamedExec(query, args)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
+// func (m MysqlConn) Update(query string, args map[string]interface{}) (interface{}, error) {
+// 	result, err := m.db.NamedExec(query, args)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return result, nil
+// }
 
-func (m MysqlConn) Delete(query string, args map[string]interface{}) (interface{}, error) {
-	result, err := m.db.NamedExec(query, args)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
+// func (m MysqlConn) Delete(query string, args map[string]interface{}) (interface{}, error) {
+// 	result, err := m.db.NamedExec(query, args)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return result, nil
+// }
