@@ -1,5 +1,6 @@
 {
   "go.lintTool": "golangci-lint",
   "editor.formatOnSave": true,
-  "go.lintFlags": ["--fast"]
+  "go.lintFlags": ["--fast"],
+  "editor.tabSize": 2
 }
