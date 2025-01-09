@@ -22,5 +22,3 @@
 ## EKS Architecture
 
 ![EKS 활용](...)
-
-### Monthly Cost (Expectation)
