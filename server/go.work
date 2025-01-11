@@ -3,6 +3,7 @@ go 1.23.4
 use (
 	./cmd/consumer
 	./cmd/content
+	./cmd/external-api
 	./cmd/producer
 	./internal/databases
 	./internal/net

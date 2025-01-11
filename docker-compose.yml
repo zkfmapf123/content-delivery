@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  ## content api
+  content:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.content
+    container_name: content
+    environment:
+      - SERVER_NAME=Content-api
+      - VERSION=1.0.0
+      - PORT=3000
+      - EXTERNAL_HOST=external-api
+    ports:
+      - 3001:3000
+    networks:
+      content-network:
+        ipv4_address: 172.21.0.10
+  ## external-api
+  external:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.external
+    container_name: external-api
+    environment:
+      - SERVER_NAME=external-api
+      - VERSION=1.0.0
+      - PORT=3000
+    ports:
+      - 3002:3000
+    networks:
+      content-network:
+        ipv4_address: 172.21.0.11
+networks:
+  content-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/24
