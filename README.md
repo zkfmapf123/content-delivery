@@ -2,7 +2,7 @@
 
 - [x] API
 - [x] Kafka
-- [x]Consumer Server
+- [x] Consumer Server
 - [x] Database
 
 ## Docker-Compose
