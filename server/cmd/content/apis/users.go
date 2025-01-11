@@ -49,14 +49,22 @@ func PostUserDelete() fiber.Handler{
 		u := mysql.NewUser()
 		err := u.Delete(id)
 
+		// Error
 		if err != nil {
+			return c.JSON(fiber.Map{
+				"message" : fmt.Sprintf("User not found : %s", err.Error()),
+			})
+		}
+		
+		// Not Exists User
+		if u.Tuser.Email == "" {
 			return c.JSON(fiber.Map{
 				"message" : fmt.Sprintf("User not found : %s", err.Error()),
 			})
 		}
 
 		return c.JSON(fiber.Map{
-			"message" : "Hello World",
+			"message" : fmt.Sprintf("User delete user : %s", u.Tuser.Email),
 		})
 	}
 }
