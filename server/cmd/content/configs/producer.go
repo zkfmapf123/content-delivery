@@ -1,31 +1,62 @@
 package configs
 
 import (
+	"encoding/json"
 	"log"
+	"strings"
 
 	"github.com/IBM/sarama"
+	"github.com/google/uuid"
 )
 
-// singleListener
-func (k KafkaAttr) ConsumerStart(processMessage func(message *sarama.ConsumerMessage)) {
-	log.Println("Starting Kafka Consumer...")
+type KafkaProducer struct {
+	topic string
+			producer sarama.SyncProducer
+}
 
-	paritionList, err := k.consumer.Partitions(k.topic)
+func NewKafkaProducer(brokers string, topic string) (*KafkaProducer, error) {
+	_brokers := strings.Split(brokers, ",")
+	
+	config := sarama.NewConfig()
+	config.Producer.RequiredAcks = sarama.WaitForAll
+	config.Producer.Retry.Max = 5
+	config.Producer.Return.Successes = true
+
+	producer, err := sarama.NewSyncProducer(_brokers, config)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
-	for _, partition := range paritionList {
-		partitionConsumer, err := k.consumer.ConsumePartition(k.topic, partition, sarama.OffsetNewest)
-		if err != nil {
-			log.Fatalln(err)
-		}
+	return &KafkaProducer{
+		topic: topic,
+		producer: producer,	
+	},nil
+}
 
-		go func(pc sarama.PartitionConsumer) {
-			for msg := range pc.Messages() {
-				processMessage(msg)
-			}
-
-		}(partitionConsumer)
+func (p *KafkaProducer) SendMessage(value interface{}) error {
+	json_data ,err := json.Marshal(value)
+	if err != nil {
+		return err
 	}
-}	
+
+	uuid := uuid.New()
+	msg := &sarama.ProducerMessage{
+		Topic: p.topic,
+		Key: sarama.StringEncoder(uuid.String()),
+		Value: sarama.StringEncoder(json_data),
+	}
+
+	partition, offset, err := p.producer.SendMessage(msg)
+	
+	if err != nil {
+		log.Printf("Message send to partition %d at offset %d", partition, offset)
+		return err
+	}
+
+	return nil
+}
+	
+
+func (p *KafkaProducer) Close() error {
+	return p.producer.Close()
+}

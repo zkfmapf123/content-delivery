@@ -14,6 +14,8 @@ var (
 	SERVER_NAME = os.Getenv("SERVER_NAME")
 	VERSION = os.Getenv("VERSION")	
 	PORT = os.Getenv("PORT")
+	BROKERS = os.Getenv("BROKERS")
+	TOPIC = os.Getenv("TOPIC")
 )
 
 func main() {
@@ -33,8 +35,8 @@ func main() {
 
 func apiUser(app *fiber.App) *fiber.App{
 	app.Get("/user/:id",middlewares.LoggerMiddleware(), apis.GetUser())
-	app.Post("/user",middlewares.LoggerMiddleware(), apis.PostUserCreate())
-	app.Delete("/user/:id",middlewares.LoggerMiddleware(), apis.PostUserDelete())
+	app.Post("/user",middlewares.LoggerMiddleware(), apis.PostUserCreate(BROKERS,TOPIC))
+	app.Delete("/user/:id",middlewares.LoggerMiddleware(), apis.PostUserDelete(BROKERS,TOPIC))
 	return app
 }
 

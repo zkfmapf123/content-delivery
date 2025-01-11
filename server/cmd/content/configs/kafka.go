@@ -2,16 +2,17 @@ package configs
 
 import (
 	"log"
+	"os"
 	"strings"
 
 	"github.com/IBM/sarama"
 )
 
 var (
-	BROKERS = "localhost:9092,localhost:9093,localhost:9094"
+	BROKERS = os.Getenv("BROKERS")
 	// BROKERS = os.Getenv("BROKERS")
-	TOPIC = "coworker-topic"
-	CONSUMER_GROUP = "user-group-1"
+	TOPIC = os.Getenv("TOPIC")
+	CONSUMER_GROUP = os.Getenv("CONSUMER_GROUP")
 )
 
 type KafkaAttr struct {

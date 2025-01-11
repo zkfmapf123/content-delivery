@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile.content
     container_name: content
     environment:
+      - BROKERS=43.201.213.254:9092,43.201.213.254:9093,43.201.213.254:9094
+      - TOPIC=user_original
       - SERVER_NAME=Content-api
       - VERSION=1.0.0
       - PORT=3000
