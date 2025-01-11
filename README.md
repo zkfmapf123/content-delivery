@@ -7,9 +7,9 @@
 
 ## Docker-Compose
 
-- [api](./docker-compose.yml) api 서버
-- [infra](./docker-compose.kafka.yml) kafka + ui
-- [log](./docker-compose.log.yml) prometheus + loki + grafana + open telemetry
+- [docker-compose.yml](./docker-compose.yml) api 서버
+- [docker-compose.kafka.yml](./docker-compose.kafka.yml) kafka + ui
+- [docker-compose.log.yml](./docker-compose.log.yml) prometheus + loki + grafana + open telemetry
 
 # Huge Traffic Architecture
 
