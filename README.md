@@ -1,9 +1,9 @@
 # Content-Delivery
 
-- API
-- Kafka
-- Consumer Server
-- Database
+- [x] API
+- [x] Kafka
+- [x]Consumer Server
+- [x] Database
 
 # Huge Traffic Architecture
 

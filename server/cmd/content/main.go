@@ -25,10 +25,8 @@ func main() {
 
 	app.Get("/health",middlewares.LoggerMiddleware(), apis.HealthCheck())
 	
-	// User
+	// User -> Kafka Producer
 	app = apiUser(app)
-	// Content
-	app = apiContent(app)
 
 	net.Run(app, PORT)	
 }
@@ -40,11 +38,11 @@ func apiUser(app *fiber.App) *fiber.App{
 	return app
 }
 
-func apiContent(app *fiber.App) *fiber.App{
-	app.Get("/content/:id",middlewares.LoggerMiddleware(), apis.GetPost())
-	app.Post("/content",middlewares.LoggerMiddleware(), apis.PostCreate())
+// func apiContent(app *fiber.App) *fiber.App{
+// 	app.Get("/content/:id",middlewares.LoggerMiddleware(), apis.GetPost())
+// 	app.Post("/content",middlewares.LoggerMiddleware(), apis.PostCreate())
 
-	app.Post("/restore/:id",middlewares.LoggerMiddleware(), apis.PostRestore())
-	app.Delete("/content/:id",middlewares.LoggerMiddleware(), apis.PostDelete())
-	return app
-}
+// 	app.Post("/restore/:id",middlewares.LoggerMiddleware(), apis.PostRestore())
+// 	app.Delete("/content/:id",middlewares.LoggerMiddleware(), apis.PostDelete())
+// 	return app
+// }

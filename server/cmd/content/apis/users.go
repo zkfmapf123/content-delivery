@@ -2,9 +2,11 @@ package apis
 
 import (
 	"cmd/content/configs"
+	"database/sql"
 	"fmt"
 	mysql "internal/databases"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	utils "github.com/zkfmapf123/go-js-utils"
@@ -32,10 +34,6 @@ func PostUserCreate(broker string, topic string) fiber.Handler{
 	return func(c *fiber.Ctx) error {
 
 		body := utils.JsonParse[mysql.User](c.Body())
-		
-		u := mysql.NewUser()
-		u.MustGenerate(0, body.Email, body.Password, false)
-
 
 		// kafka
 		producer, err := configs.NewKafkaProducer(broker, topic)
@@ -45,7 +43,7 @@ func PostUserCreate(broker string, topic string) fiber.Handler{
 			})
 		}
 
-		err = producer.SendMessage(u.Tuser)
+		err = producer.SendMessage(body)
 		if err != nil {
 			return c.JSON(fiber.Map{
 				"message" : fmt.Sprintf("Kafka Producer Error : %s", err.Error()),
@@ -66,20 +64,17 @@ func PostUserDelete(broker string, topic string) fiber.Handler{
 		id ,_ := strconv.Atoi(_id)
 
 		u := mysql.NewUser()
-		err := u.Delete(id)
+		u.Get(id)
 
-		// Error
-		if err != nil {
-			return c.JSON(fiber.Map{
-				"message" : fmt.Sprintf("User not found : %s", err.Error()),
-			})
-		}
-		
-		// Not Exists User
 		if u.Tuser.Email == "" {
 			return c.JSON(fiber.Map{
-				"message" : fmt.Sprintf("User not found : %s", err.Error()),
+				"message" : "User not found",
 			})
+		}
+
+		u.Tuser.DeletedAt = sql.NullTime{
+			Time: time.Now(),
+			Valid: true,
 		}
 
 		// kafka
@@ -91,6 +86,7 @@ func PostUserDelete(broker string, topic string) fiber.Handler{
 		}
 
 		err = producer.SendMessage(u.Tuser)
+
 		if err != nil {
 			return c.JSON(fiber.Map{
 				"message" : fmt.Sprintf("Kafka Producer Error : %s", err.Error()),
@@ -100,7 +96,7 @@ func PostUserDelete(broker string, topic string) fiber.Handler{
 		defer producer.Close()
 
 		return c.JSON(fiber.Map{
-			"message" : fmt.Sprintf("User delete user : %s", u.Tuser.Email),
+			"message" : "Delete",
 		})
 	}
 }

@@ -9,7 +9,7 @@ FROM base as build
 WORKDIR /app
 
 COPY . .
-RUN cd cmd/external-api && \
+RUN cd cmd/consumer && \
     go mod download -x && \
     CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o main .
 
@@ -20,7 +20,7 @@ WORKDIR /app
 
 ## Fiber PreFork
 COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
-COPY --from=build /app/cmd/external-api/main ./
+COPY --from=build /app/cmd/consumer/main ./
 
 EXPOSE 3000
 
