@@ -11,7 +11,7 @@
 - [docker-compose.kafka.yml](./docker-compose.kafka.yml) kafka + ui
 - [docker-compose.log.yml](./docker-compose.log.yml) prometheus + loki + grafana + open telemetry
 
-# Huge Traffic Architecture
+# Huge Traffic Architecture Use Kafka
 
 ![asis](./public/asis.png)
 
