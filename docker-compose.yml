@@ -19,6 +19,15 @@ services:
     networks:
       content-network:
         ipv4_address: 172.21.0.10
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "172.21.0.12:24224"
+        fluentd-async: "true"
+        tag: "{{.Name}}"
+        env: "prd"
+    depends_on:
+      - fluentbit
   ## external-api
   consumer:
     build:
@@ -35,6 +44,40 @@ services:
     networks:
       content-network:
         ipv4_address: 172.21.0.11
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "172.21.0.12:24224"
+        fluentd-async: "true"
+        tag: "{{.Name}}"
+        env: "prd"
+    depends_on:
+      - fluentbit
+  ## fluentbit
+  fluentbit:
+    image: fluent/fluent-bit:2.0.10
+    container_name: fluentbit
+    volumes:
+      - ./config/fluentbit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./logs:/logs
+    ports:
+      - "24224:24224"
+      - "2020:2020"
+    user: "0"
+    networks:
+      content-network:
+        ipv4_address: 172.21.0.12
+  ## promethues
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      content-network:
+        ipv4_address: 172.21.0.13
 networks:
   content-network:
     driver: bridge

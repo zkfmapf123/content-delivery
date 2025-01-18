@@ -19,3 +19,10 @@
 - DB 자체에 장애가 발생한다면 모든시스템에 장애가 발생할 수 있음 (SPOF)
 
 ![tobe](./public/tobe.png)
+
+## LGTM Stack
+
+- Loki
+- Grafana
+- Tempo
+- Mimir
