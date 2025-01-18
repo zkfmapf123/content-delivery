@@ -22,7 +22,16 @@
 
 ## LGTM Stack
 
-- Loki
-- Grafana
-- Tempo
-- Mimir
+![ff](./public/fluentbit.png)
+
+### 로그수집
+
+- fluentbit + loki
+
+### 메트릭 수집
+
+- fluentbit + prometheus + mimir
+
+### 분산 Tracing
+
+- application + tempo
