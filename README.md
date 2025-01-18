@@ -47,3 +47,5 @@
 ## 참고
 
 - <a href="https://medium.com/@dudwls96/opentelemetry-grafana-loki-tempo-prometheus%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-golang-observability-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0-3cf148039c1c"> Golang Tempo 구성하기 </a>
+
+- <a href="https://nyyang.tistory.com/175"> LGTM Stack 구성하기 </a>

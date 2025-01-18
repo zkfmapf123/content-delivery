@@ -1,0 +1,15 @@
+{
+  "name": "mysql-source-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:mysql://172.20.0.5:3306/users",
+    "connection.user": "dobby",
+    "connection.password": "1234",
+    "topic.prefix": "mysql_",
+    "mode": "incrementing",
+    "incrementing.column.name": "id",
+    "table.whitelist": "users",
+    "poll.interval.ms": "5000"
+  }
+}

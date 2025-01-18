@@ -1,5 +1,6 @@
 version: "3"
 services:
+  ## zookeeper
   zookeeper:
     image: "bitnami/zookeeper:3.7.2"
     container_name: zookeeper
@@ -13,6 +14,7 @@ services:
       - ./.data/zookeeper/logs:/bitnami/zookeeper/logs
     networks:
       - kafka_network
+  ## kafka1
   kafka1:
     image: "bitnami/kafka:3.6.0"
     container_name: kafka1
@@ -34,6 +36,7 @@ services:
       - ./.data/kafka1:/bitnami/kafka/data
     networks:
       - kafka_network
+  ## kafka2
   kafka2:
     image: "bitnami/kafka:3.6.0"
     container_name: kafka2
@@ -54,6 +57,7 @@ services:
       - ./.data/kafka2:/bitnami/kafka/data
     networks:
       - kafka_network
+  ## kafka3
   kafka3:
     image: "bitnami/kafka:3.6.0"
     container_name: kafka3
@@ -83,13 +87,19 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:19092,kafka2:19092,kafka3:19092
+      - KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME=mysql-sink-connector
+      - KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS=http://kafka-connect:8083
+      - KAFKA_CLUSTERS_1_KAFKACONNECT_1_NAME=mysql-source-connector
+      - KAFKA_CLUSTERS_1_KAFKACONNECT_1_ADDRESS=http://kafka-connect:8083
     depends_on:
       - zookeeper
       - kafka1
       - kafka2
       - kafka3
+      - kafka-connect
     networks:
       - kafka_network
+  ## mysql
   mysql:
     image: "mysql:8.0.35"
     container_name: mysql
@@ -105,6 +115,62 @@ services:
     networks:
       kafka_network:
         ipv4_address: 172.20.0.5
+  ## kafka-connect
+  kafka-connect:
+    image: "confluentinc/cp-kafka-connect:latest"
+    container_name: kafka-mysql-connect
+    ## JDBC Connector 설치
+    command: |
+      bash -c '
+        echo "Installing connector plugins"
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run
+      '
+    ports:
+      - "8083:8083"
+    environment:
+      - CONNECT_BOOTSTRAP_SERVERS=kafka1:19092,kafka2:19092,kafka3:19092
+      - CONNECT_REST_PORT=8083
+      - CONNECT_GROUP_ID=kafka-connect-group
+      - CONNECT_CONFIG_STORAGE_TOPIC=connect-configs
+      - CONNECT_OFFSET_STORAGE_TOPIC=connect-offsets
+      - CONNECT_STATUS_STORAGE_TOPIC=connect-status
+      - CONNECT_KEY_CONVERTER=org.apache.kafka.connect.storage.StringConverter
+      - CONNECT_VALUE_CONVERTER=org.apache.kafka.connect.storage.StringConverter
+      - CONNECT_INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_REST_ADVERTISED_HOST_NAME=kafka-connect
+      - CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
+      - CONNECT_PLUGIN_PATH=/usr/share/java,/usr/share/confluent-hub-components
+    volumes:
+      - ./kafka-connect/mysql-sink-config.json:/kafka-connect/mysql-sink-config.json
+      - ./kafka-connect/mysql-source-config.json:/kafka-connect/mysql-source-config.json
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - mysql
+    networks:
+      kafka_network:
+        ipv4_address: 172.20.0.10
+  ## schema-registry
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    container_name: schema-registry
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    ports:
+      - "8088:8081"
+    environment:
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+      - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=kafka1:19092,kafka2:19092,kafka3:19092
+    networks:
+      kafka_network:
+        ipv4_address: 172.20.0.11
 
 volumes:
   mysql-volume:
